@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload MRA Scan</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+        .form-upload {
+            margin: auto;
+            width: 50%;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            background: #f8f9fa;
+        }
+        .btn-primary {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="form-upload">
+        <h2 class="text-center">Upload MRA Scan for Processing</h2>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="fileUpload">Select MRA scan:</label>
+                <input type="file" class="form-control-file" id="fileUpload" name="file">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+    </div>
+</div>
+<div class="text-center" id="message"></div>
+<br>
+<div class="text-center" id="loading" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+<!-- Bootstrap and jQuery scripts are already included above -->
+<script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent default form submission
+        const formData = new FormData(this);
+        document.getElementById('loading').style.display = 'block'; // Show loading animation
+        fetch('/upload', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('loading').style.display = 'none'; // Hide loading animation
+            if (data.success) {
+                const messageElement = document.getElementById('message');
+                messageElement.innerHTML = `<div class="alert alert-success" role="alert">${data.success}</div>`;
+                // Add download button
+                const downloadBtn = document.createElement('a');
+                downloadBtn.href = `/download/${data.filename}`;
+                downloadBtn.classList.add('btn', 'btn-primary');
+                downloadBtn.setAttribute('download', ''); // This attribute prompts the file to be downloaded
+                downloadBtn.innerText = 'Download Output File';
+                messageElement.appendChild(downloadBtn);
+            } else {
+                document.getElementById('message').innerHTML = `<div class="alert alert-danger" role="alert">${data.error}</div>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('loading').style.display = 'none'; // Hide on error
+            document.getElementById('message').innerHTML = `<div class="alert alert-danger" role="alert">An error occurred</div>`;
+        });
+    });
+    </script>       
+</body>
+</html>

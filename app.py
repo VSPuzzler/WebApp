@@ -27,17 +27,22 @@ def upload_file():
         #process = subprocess.Popen('asd', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         #stdout, stderr = process.communicate()        
 
-        time.sleep(random.randint(10, 11))  # Random delay between 20 to 30 seconds
+        time.sleep(random.randint(1, 2))  # Random delay between 20 to 30 seconds
         # Assuming processing creates an output file named 'output_file.nii.gz' in OUTPUT_FOLDER
         if filename == "MRA_001.nii.gz":
             output_filename = "ARTERY_001.nii.gz"
+            model_url = "static/ARTERY_001.glb"
+            aneursym_filename = "ANEURYSM_MASK_001.nii.gz"
         elif filename == "MRA_002.nii.gz":
             output_filename = "ARTERY_002.nii.gz"
+            model_url = "static/ARTERY_002.glb"
+            aneursym_filename = "ANEURYSM_MASK_001.nii.gz"
         elif filename == "MRA_003.nii.gz":
             output_filename = "ARTERY_003.nii.gz"
+            model_url = "static/ARTERY_003.glb"
         else:
             output_filename = "ARTERY_002.nii.gz"
-        return jsonify({"success": "File processed successfully", "filename": output_filename})
+        return jsonify({"success": "File processed successfully", "filename": output_filename, "model_url": model_url, "aneurysm_filename": aneursym_filename})
     else:
         return jsonify({"error": "Only .nii.gz files are allowed"})
         #if process.returncode == 0:

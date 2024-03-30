@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload MRA Scan</title>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
@@ -27,7 +29,7 @@
 
 <div class="container">
     <div class="form-upload">
-        <h2 class="text-center">Upload MRA Scan for Processing</h2>
+        <h2 class="text-center">Upload MRA Scan for Segmentation</h2>
         <form action="/upload" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="fileUpload">Select MRA scan:</label>
@@ -45,6 +47,22 @@
         <span class="sr-only">Loading...</span>
     </div>
 </div>
+<div id="model-container" style="width: 100%; height: 600px; display: none;">
+    <model-viewer id="model-viewer" style="width: 100%; height: 100%;" camera-controls auto-rotate></model-viewer>
+</div>
+
+<div id="additional-content" style="display: none; text-align: center;">
+    <p id="additional-text">If the patient has an aneurysm, you can segment the volume aswell.</p>
+    <button id="additional-button" class="btn btn-primary">Segment Aneurysm</button>
+    <!-- Loading spinner -->
+    <br>
+    <div id="additional-spinner" class="text-center" style="display: none;; margin-top: 20px;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+</div>
+
 <!-- Bootstrap and jQuery scripts are already included above -->
 <script>
     document.querySelector('form').addEventListener('submit', function(e) {
@@ -68,6 +86,13 @@
                 downloadBtn.setAttribute('download', ''); // This attribute prompts the file to be downloaded
                 downloadBtn.innerText = 'Download Output File';
                 messageElement.appendChild(downloadBtn);
+
+                document.getElementById('model-container').style.display = 'block';
+                const modelViewer = document.getElementById('model-viewer');
+                modelViewer.setAttribute('src', data.model_url); // Set the URL for the 3D model
+        
+                document.getElementById('additional-content').style.display = 'block';
+
             } else {
                 document.getElementById('message').innerHTML = `<div class="alert alert-danger" role="alert">${data.error}</div>`;
             }
@@ -77,6 +102,27 @@
             document.getElementById('loading').style.display = 'none'; // Hide on error
             document.getElementById('message').innerHTML = `<div class="alert alert-danger" role="alert">An error occurred</div>`;
         });
+    });
+    document.getElementById('additional-button').addEventListener('click', function() {
+        // Show loading spinner
+        document.getElementById('additional-spinner').style.display = 'block';
+        
+        // Disable the button while loading
+        this.setAttribute('disabled', 'disabled');
+
+        // Set a timeout for 10-20 seconds before showing the download button
+        setTimeout(function() {
+            // Hide loading spinner
+            document.getElementById('additional-spinner').style.display = 'none';
+            
+            // Create and show the download button
+            const downloadBtn = document.createElement('a');
+            downloadBtn.href = `/download/somefile.ext`; // Set the href to the file you want to download
+            downloadBtn.classList.add('btn', 'btn-primary');
+            downloadBtn.setAttribute('download', '');
+            downloadBtn.innerText = 'Download File';
+            document.getElementById('additional-content').appendChild(downloadBtn);
+        }, Math.random() * 1000 + 1000); // Random time between 10-20 seconds
     });
     </script>       
 </body>

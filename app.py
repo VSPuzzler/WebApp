@@ -33,16 +33,23 @@ def upload_file():
             output_filename = "ARTERY_001.nii.gz"
             model_url = "static/ARTERY_001.glb"
             aneursym_filename = "ANEURYSM_MASK_001.nii.gz"
+            aneurysm_model = "static/ANEURYSM_MASK_001.glb"
+            geometrical_features = "static/ANEURYSM_GEOMETRY_001.csv"
         elif filename == "MRA_002.nii.gz":
             output_filename = "ARTERY_002.nii.gz"
             model_url = "static/ARTERY_002.glb"
             aneursym_filename = "ANEURYSM_MASK_001.nii.gz"
+            aneurysm_model = "static/ANEURYSM_MASK_002.glb"
+            geometrical_features = "static/ANEURYSM_GEOMETRY_002.csv"
         elif filename == "MRA_003.nii.gz":
             output_filename = "ARTERY_003.nii.gz"
             model_url = "static/ARTERY_003.glb"
+            aneursym_filename = "ANEURYSM_MASK_001.nii.gz"
+            aneurysm_model = "static/ANEURYSM_MASK_002.glb"
+            geometrical_features = "static/ANEURYSM_GEOMETRY_002.csv"
         else:
             output_filename = "ARTERY_002.nii.gz"
-        return jsonify({"success": "File processed successfully", "filename": output_filename, "model_url": model_url, "aneurysm_filename": aneursym_filename})
+        return jsonify({"success": "File processed successfully", "filename": output_filename, "model_url": model_url, "aneurysm_filename": aneursym_filename, "aneurysm_model": aneurysm_model, "geometrical_features": geometrical_features})
     else:
         return jsonify({"error": "Only .nii.gz files are allowed"})
         #if process.returncode == 0:
